@@ -28,6 +28,8 @@ halt (void)
 void
 exit (int status)
 {
+  process_exit(status);
+  return status;
 }
 
 pid_t
