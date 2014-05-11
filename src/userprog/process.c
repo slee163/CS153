@@ -81,6 +81,7 @@ start_process (void *file_name_)
   sema_up(&thread_current()->cp->load_sema);
 */
   /* If load failed, quit. */
+  //
   palloc_free_page (file_name);
   if (!success) 
     thread_exit ();
