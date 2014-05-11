@@ -5,6 +5,9 @@
 #include <list.h>
 #include <stdint.h>
 
+#define FD_MIN 2
+
+
 /* States in a thread's life cycle. */
 enum thread_status
   {
@@ -80,6 +83,13 @@ typedef int tid_t;
    only because they are mutually exclusive: only a thread in the
    ready state is on the run queue, whereas only a thread in the
    blocked state is on a semaphore wait list. */
+
+struct fd_file
+{
+  int fd;
+  struct file* the_file;
+};
+
 struct thread
   {
     /* Owned by thread.c. */
@@ -100,6 +110,8 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+    struct fd_file* fd_table;
   };
 
 /* If false (default), use round-robin scheduler.

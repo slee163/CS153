@@ -18,8 +18,13 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+#include "threads/malloc.h"
+
+#define DEFAULT_ARGV 4
+#define WORD_SIZE 4
+
 static thread_func start_process NO_RETURN;
-static bool load (const char *cmdline, void (**eip) (void), void **esp);
+static bool load (const char *cmdline, void (**eip) (void), void **esp, char** args);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -41,7 +46,7 @@ process_execute (char *file_name)
   strlcpy (fn_copy, file_name, PGSIZE);
 
   char* save_ptr;
-  file_name = strtok_r(file_name, " ", &save_ptr)
+  file_name = strtok_r(file_name, " ", &save_ptr);
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
@@ -60,14 +65,14 @@ start_process (void *file_name_)
   bool success;
 
   char* save_ptr;
-  file_name = strtok_r(filename, " ", &saveptr);
+  file_name = strtok_r(file_name, " ", &save_ptr);
 
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
-  success = load (file_name, &if_.eip, &if_.esp, &saveptr);
+  success = load (file_name, &if_.eip, &if_.esp, &save_ptr);
 /*
   if(success)
   {thread_current()->cp->load = LOADED;}
@@ -102,17 +107,21 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+  while(true)
+  {}
   return -1;
 }
 
 /* Free the current process's resources. */
 void
-process_exit (int exit_code = 0)
+process_exit (int exit_code UNUSED)
 {
   struct thread *cur = thread_current ();
   uint32_t *pd;
 
-  char proc_name[16] = cur->name;
+  char proc_name[16];
+  strlcpy(proc_name, cur->name, 16);
+  
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
@@ -130,7 +139,7 @@ process_exit (int exit_code = 0)
       pagedir_activate (NULL);
       pagedir_destroy (pd);
     }
-  printf("%s: exit(%d)\n", proc_name, exit_code);
+  //printf("%s: exit(%d)\n", proc_name, exit_code);
 }
 
 /* Sets up the CPU for running user code in the current
@@ -321,11 +330,73 @@ load (const char *file_name, void (**eip) (void), void **esp, char** args)
   /* Set up stack. */
   if (!setup_stack (esp))
     goto done;
-
+ 
   /* Start address. */
   *eip = (void (*) (void)) ehdr.e_entry;
 
   success = true;
+
+  int j = 0;
+  int argc = 0;
+  int arg_size = DEFAULT_ARGV;
+  char* token;
+  char** argv = malloc(DEFAULT_ARGV * sizeof(char*));
+  char** cont = malloc(DEFAULT_ARGV * sizeof(char*));
+ 
+  //create argument array from command line args
+  for(token = (char*) file_name; token != NULL; token = strtok_r(NULL," ", args))
+  {
+    cont[argc] = token;
+    argc++;
+    if(argc >= arg_size)
+    {
+      arg_size *= 2;
+      cont = realloc(cont, arg_size *sizeof(char*));
+      argv = realloc(argv, arg_size *sizeof(char*));
+    }
+  }
+
+  //copy the arguments to the stack
+  //keep track of argument addresses in argv
+  for(j = argc-1; j >= 0; j--)
+  {
+    *esp -= strlen(cont[j]) + 1;
+    argv[j] = *esp;
+    memcpy(*esp,cont[j],strlen(cont[j]) +1);
+  }
+
+  //NULL terminate the array
+  argv[argc] = 0;
+
+  //Word align
+  j = (size_t) *esp % WORD_SIZE;
+  if(j)
+  {
+    *esp -= j;
+    memcpy(*esp, &argv[argc], j);
+  }
+
+  //Copy the array of addresses onto the stack 
+  for(j = argc; j >= 0; j--)
+  {
+    *esp -= sizeof(char*);
+    memcpy(*esp, &argv[j], sizeof(char*));
+  }
+
+  //Push the address of the argv onto the stack
+  token = *esp;
+  *esp -= sizeof(char**);
+  memcpy(*esp, &token, sizeof(char**));
+
+  //Push argc onto the stack
+  *esp -= sizeof(int);
+  memcpy(*esp, &argc, sizeof(int));
+
+  //Push fake return address onto stack
+  *esp -= sizeof(void*);
+  memcpy(*esp, &argv[argc], sizeof(void*));
+  free(argv);
+  free(cont);
 
  done:
   /* We arrive here whether the load is successful or not. */

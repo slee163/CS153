@@ -204,6 +204,11 @@ thread_create (const char *name, int priority,
   sf->eip = switch_entry;
   sf->ebp = 0;
 
+  //fd tables are shared between differnt threads
+  //of the same process
+  if(thread_current()->fd_table != NULL)
+  {t->fd_table = thread_current()->fd_table;}
+
   intr_set_level (old_level);
 
   /* Add to run queue. */
@@ -291,7 +296,7 @@ thread_exit (void)
   ASSERT (!intr_context ());
 
 #ifdef USERPROG
-  process_exit ();
+  process_exit (0);
 #endif
 
   /* Remove thread from all threads list, set our status to dying,
@@ -469,6 +474,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  
   list_push_back (&all_list, &t->allelem);
 }
 
