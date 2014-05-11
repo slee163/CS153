@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 #define FD_MIN 2
-
+//
 
 /* States in a thread's life cycle. */
 enum thread_status
