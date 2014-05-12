@@ -1,0 +1,22 @@
+FAIL
+Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0028589 0xc002b7b8 0xc002b86a 0xc0021a94 0xc0021bcb 0xc002ba85 0xc002bced 0xc0021a94 0xc0021bcb 0x804a17f 0x80480ba 0x8048100 0x8048748
+Translation of call stack:
+In kernel.o:
+0xc0028589: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002b7b8: kill (.../userprog/exception.c:105)
+0xc002b86a: page_fault (.../userprog/exception.c:160)
+0xc0021a94: intr_handler (..../threads/interrupt.c:367)
+0xc0021bcb: intr_entry (threads/intr-stubs.S:38)
+0xc002ba85: create (.../../userprog/syscall.c:69)
+0xc002bced: syscall_handler (...../userprog/syscall.c:254)
+0xc0021a94: intr_handler (..../threads/interrupt.c:367)
+0xc0021bcb: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/create-null:
+0x0804a17f: create (.../../lib/user/syscall.c:93)
+0x080480ba: test_main (...userprog/create-null.c:10)
+0x08048100: main (...ild/../../tests/main.c:13)
+0x08048748: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.

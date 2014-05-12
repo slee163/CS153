@@ -86,8 +86,8 @@ typedef int tid_t;
 
 struct fd_file
 {
-  int fd;
-  struct file* the_file;
+  int fd;// = -1;
+  struct file* the_file;// = NULL;
 };
 
 struct thread
@@ -111,7 +111,8 @@ struct thread
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
 
-    struct fd_file* fd_table;
+    struct fd_file fd_table[128];
+    int fd_count;
   };
 
 /* If false (default), use round-robin scheduler.
@@ -151,4 +152,5 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 struct thread* get_thread_from_tid(tid_t tid);
+struct fd_file* get_file_from_fd(int fd);
 #endif /* threads/thread.h */

@@ -1,0 +1,35 @@
+Copying tests/userprog/open-null to scratch partition...
+qemu -hda /tmp/apiK389AGx.dsk -m 4 -net none -nographic -monitor null
+PiLo hda1
+Loading.........
+Kernel command line: -q -f extract run open-null
+Pintos booting with 4,096 kB RAM...
+383 pages available in kernel pool.
+383 pages available in user pool.
+Calibrating timer...  78,540,800 loops/s.
+hda: 5,040 sectors (2 MB), model "QM00001", serial "QEMU HARDDISK"
+hda1: 147 sectors (73 kB), Pintos OS kernel (20)
+hda2: 4,096 sectors (2 MB), Pintos file system (21)
+hda3: 91 sectors (45 kB), Pintos scratch (22)
+filesys: using hda2
+scratch: using hda3
+Formatting file system...done.
+Boot complete.
+Extracting ustar archive from scratch device into file system...
+Putting 'open-null' into the file system...
+Erasing ustar archive...
+Executing 'open-null':
+(open-null) begin
+Kernel PANIC at ../../filesys/directory.c:125 in dir_lookup(): assertion `name != NULL' failed.
+Call stack: 0xc0028589 0xc002cc21 0xc002c1d7 0xc002ba39 0xc002bd1f 0xc0021a94 0xc0021bcb 0x804a187 0x80480b2 0x80480e4 0x8048728.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 251 ticks
+Thread: 0 idle ticks, 250 kernel ticks, 1 user ticks
+hda2 (filesys): 62 reads, 186 writes
+hda3 (scratch): 90 reads, 2 writes
+Console: 1194 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

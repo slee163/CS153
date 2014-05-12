@@ -22,6 +22,10 @@
 
 #define FD_OFFSET 2
 
+//static struct fd_file[128];
+//static int fd_count = 0;
+//static struct lock fd_lock;
+
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
 static struct list ready_list;
@@ -73,8 +77,6 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
-static struct lock all_list_lock;
-
 
 struct thread* get_thread_from_tid(tid_t tid)
 {
@@ -95,6 +97,16 @@ struct thread* get_thread_from_tid(tid_t tid)
   intr_set_level(old_level);
   return NULL;
 }
+  
+struct fd_file* get_file_from_fd(int fd)
+{
+  struct thread* t = thread_current();
+  if(t->fd_table[fd - FD_MIN].fd == -1)
+  {return NULL;}
+  else
+  {return &t->fd_table[fd - FD_MIN];}
+}
+
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
    general and it is possible in this case only because loader.S
@@ -117,7 +129,7 @@ thread_init (void)
   list_init (&ready_list);
   list_init (&all_list);
 
-  lock_init (&all_list_lock);
+  //lock_init (&fd_lock);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -232,8 +244,8 @@ thread_create (const char *name, int priority,
 
   //fd tables are shared between differnt threads
   //of the same process
-  if(thread_current()->fd_table != NULL)
-  {t->fd_table = thread_current()->fd_table;}
+  //if(thread_current()->fd_table != NULL)
+  //{t->fd_table = thread_current()->fd_table;}
 
   intr_set_level (old_level);
 
