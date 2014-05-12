@@ -20,6 +20,8 @@
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
+#define FD_OFFSET 2
+
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
 static struct list ready_list;
@@ -71,6 +73,28 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
+static struct lock all_list_lock;
+
+
+struct thread* get_thread_from_tid(tid_t tid)
+{
+  struct thread* t;
+  struct list_elem* e;
+  enum intr_level old_level;
+  old_level = intr_disable();
+
+  for(e = list_begin(&all_list); e != list_end(&all_list); e = list_next(e))
+  {
+    t = list_entry(e,struct thread,allelem);
+    if(t->tid == tid)
+    {
+      intr_set_level(old_level);
+      return t;
+    }
+  }
+  intr_set_level(old_level);
+  return NULL;
+}
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
    general and it is possible in this case only because loader.S
@@ -92,6 +116,8 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
+
+  lock_init (&all_list_lock);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();

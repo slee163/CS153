@@ -1,8 +1,8 @@
-Copying tests/userprog/args-dbl-space to scratch partition...
-qemu -hda /tmp/WhvR91f3D5.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/halt to scratch partition...
+qemu -hda /tmp/wfnNobs9db.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading.........
-Kernel command line: -q -f extract run 'args-dbl-space two  spaces!'
+Kernel command line: -q -f extract run halt
 Pintos booting with 4,096 kB RAM...
 383 pages available in kernel pool.
 383 pages available in user pool.
@@ -16,23 +16,15 @@ scratch: using hda3
 Formatting file system...done.
 Boot complete.
 Extracting ustar archive from scratch device into file system...
-Putting 'args-dbl-space' into the file system...
+Putting 'halt' into the file system...
 Erasing ustar archive...
-Executing 'args-dbl-space two  spaces!':
-(args) begin
-(args) argc = 3
-(args) argv[0] = 'args-dbl-space'
-(args) argv[1] = 'two'
-(args) argv[2] = 'spaces!'
-(args) argv[3] = null
-(args) end
-args-dbl-space: exit(0)
-Execution of 'args-dbl-space' complete.
-Timer: 255 ticks
-Thread: 0 idle ticks, 254 kernel ticks, 1 user ticks
-hda2 (filesys): 63 reads, 186 writes
+Executing 'halt':
+(halt) begin
+Timer: 254 ticks
+Thread: 0 idle ticks, 254 kernel ticks, 0 user ticks
+hda2 (filesys): 61 reads, 186 writes
 hda3 (scratch): 90 reads, 2 writes
-Console: 1050 characters output
+Console: 795 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
