@@ -1,0 +1,185 @@
+			+--------------------------+
+			|		    CS 153         |
+			| PROJECT 2: USER PROGRAMS |
+			| 	   DESIGN DOCUMENT     |
+			+--------------------------+
+
+---- GROUP ----
+
+>> Fill in the names and email addresses of your group members.
+
+Spencer Lee <slee163@ucr.edu>
+Chris Dube  <cdube001@ucr.edu>
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+			   ARGUMENT PASSING
+			   ================
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+None
+
+---- ALGORITHMS ----
+
+>> A2: Briefly describe how you implemented argument parsing.  How do
+>> you arrange for the elements of argv[] to be in the right order?
+>> How do you avoid overflowing the stack page?
+
+A: In our implementation of argument parsing, we followed the assignment 
+   specifications within Section 3.5.1, where the command is broken down into
+   seperate words and pushed onto the top of stack regardless of order since 
+   they are referenced via pointers. The order is exactly as it was written in 
+   the command line. 
+   We avoid overflowing the stack page by keeping track of the stack pointer as 
+   the contents are pushed onto the stack and preventing any possibility of overflow.
+
+---- RATIONALE ----
+
+>> A3: Why does Pintos implement strtok_r() but not strtok()?
+
+A: strtok() is not thread-safe as it uses a static pointer for its placement
+   whereas strtok_r() uses the third argument to specify where to search tokens
+   within the string, useful for multi-threading.
+    
+    
+>> A4: In Pintos, the kernel separates commands into a executable name
+>> and arguments.  In Unix-like systems, the shell does this
+>> separation.  Identify at least two advantages of the Unix approach.
+
+A: One advantage of the Unix approach is the fact that the shell would handle 
+   parsing operations and would therefore check for unsafe/incorrect command 
+   lines before being passed to the kernel, reducing the amount of work the 
+   kernel has. (the second advantage).
+
+			     SYSTEM CALLS
+			     ============
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+
+
+>> B2: Describe how file descriptors are associated with open files.
+>> Are file descriptors unique within the entire OS or just within a
+>> single process?
+
+A: Within the system call 'open' where it opens a file and 
+   returns a file descriptor which is a positive integer handle. Each 
+   thread contains a set of file descriptors, where each file descriptor for a 
+   single file do not share a file position and closed seperately.  
+
+---- ALGORITHMS ----
+
+>> B3: Describe your code for reading and writing user data from the
+>> kernel.
+
+A: We first before letting the kernel access user memory, we check the 
+   the given user program pointer to confirm that it is not a null pointer, a
+   pointer to any unmapped virtual memory , or a pointer to the kernel's 
+   virtual address space. If any of these cases occur, our implementation 
+   ends that process and releases the resources used by that process to ensure
+   that no other processes or the kernel itself are affected.
+
+>> B4: Suppose a system call causes a full page (4,096 bytes) of data
+>> to be copied from user space into the kernel.  What is the least
+>> and the greatest possible number of inspections of the page table
+>> (e.g. calls to pagedir_get_page()) that might result?  What about
+>> for a system call that only copies 2 bytes of data?  Is there room
+>> for improvement in these numbers, and how much?
+
+A: The least number of possible inspections of the page table would be 1 while
+   the greatest possible number would be n, where n is equal to the total number
+   of arguments passed in the command line. For the system call that only copies 
+   2 bytes of data the situation would be the same where it is a matter of the 
+   number of arguments passed. We could significantly reduce the number of 
+   inspections where we only check once if the data is only on one page or 2 if 
+   extends to a second page. Greatly reducing the number of inspections to
+   a constant number. 
+
+>> B5: Briefly describe your implementation of the "wait" system call
+>> and how it interacts with process termination.
+
+A: In the case of our implementation of the wait system call, it calls 
+   process_wait where it will get the thread from child's thread id and will 
+   first check if the pointer is NULL. After confirming that it is not it will 
+   begin to loop (busy waiting/spinning) until the thread from the child's 
+   thread id is either NULL or the threads status is THREAD_DYING, in the case 
+   where it will break the loop and return 0 to system call wait. Then wait will
+   return that status. 
+
+>> B6: Any access to user program memory at a user-specified address
+>> can fail due to a bad pointer value.  Such accesses must cause the
+>> process to be terminated.  System calls are fraught with such
+>> accesses, e.g. a "write" system call requires reading the system
+>> call number from the user stack, then each of the call's three
+>> arguments, then an arbitrary amount of user memory, and any of
+>> these can fail at any point.  This poses a design and
+>> error-handling problem: how do you best avoid obscuring the primary
+>> function of code in a morass of error-handling?  Furthermore, when
+>> an error is detected, how do you ensure that all temporarily
+>> allocated resources (locks, buffers, etc.) are freed?  In a few
+>> paragraphs, describe the strategy or strategies you adopted for
+>> managing these issues.  Give an example.
+
+---- SYNCHRONIZATION ----
+
+>> B7: The "exec" system call returns -1 if loading the new executable
+>> fails, so it cannot return before the new executable has completed
+>> loading.  How does your code ensure this?  How is the load
+>> success/failure status passed back to the thread that calls "exec"?
+
+A: For our implementation, to ensure that exec returns -1 if the new excutable 
+   fails, we assign process_execute(filename) where filename is given from the 
+   command line, to a thread id that will store the success/failure status given
+   from process_execute. 
+   From there we compare the thread id with the macro TID_ERROR. If this 
+   comparison returns true we know that the thread could not be created so the 
+   loading of the new executable has failed. Otherwise it returns the thread id.
+   
+
+>> B8: Consider parent process P with child process C.  How do you
+>> ensure proper synchronization and avoid race conditions when P
+>> calls wait(C) before C exits?  After C exits?  How do you ensure
+>> that all resources are freed in each case?  How about when P
+>> terminates without waiting, before C exits?  After C exits?  Are
+>> there any special cases?
+
+A: We have so far been unable to account for the possible race conditions that 
+   could occur when the parent process calls wait. We also do not ensure that 
+   the resources are freed. 
+
+---- RATIONALE ----
+
+>> B9: Why did you choose to implement access to user memory from the
+>> kernel in the way that you did?
+
+A: For our implementation we used the first method mentioned within the 
+   assignment specifications where it verifies whether the a user-provided 
+   pointer is valid at first before dereferencing it.
+
+>> B10: What advantages or disadvantages can you see to your design
+>> for file descriptors?
+
+A: Problem could occur where threads within the same process cannot share their
+   file descriptors with each other. 
+
+>> B11: The default tid_t to pid_t mapping is the identity mapping.
+>> If you changed it, what advantages are there to your approach?
+    
+A: We left the default implementation as is.
+
