@@ -1,5 +1,5 @@
 Copying tests/userprog/open-bad-ptr to scratch partition...
-qemu -hda /tmp/ZCia9NyzOD.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/Qe18BFsHLf.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading.........
 Kernel command line: -q -f extract run open-bad-ptr
@@ -23,16 +23,16 @@ Executing 'open-bad-ptr':
 Page fault at 0x20101234: not present error reading page in kernel context.
 Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc00277d7
  cr2=20101234 error=00000000
- eax=c010ae6c ebx=00000000 ecx=20101234 edx=20101234
- esi=c010705c edi=c010ae68 esp=00000003 ebp=c010ae24
+ eax=c010ae5c ebx=00000000 ecx=20101234 edx=20101234
+ esi=c010705c edi=c010ae58 esp=00000003 ebp=c010ae14
  cs=0008 ds=0010 es=0010 ss=620c
 Kernel PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0028589 0xc002b7b8 0xc002b86a 0xc0021a94 0xc0021bcb 0xc00277d7 0xc002ca3f 0xc002cc30 0xc002c1d7 0xc002ba39 0xc002bd1f 0xc0021a94 0xc0021bcb 0x804a1a7 0x80480b2 0x8048100 0x8048748.
+Call stack: 0xc0028589 0xc002b7b8 0xc002b86a 0xc0021a94 0xc0021bcb 0xc00277d7 0xc002ca6f 0xc002cc60 0xc002c207 0xc002ba31 0xc002bd3c 0xc0021a94 0xc0021bcb 0x804a1a7 0x80480b2 0x8048100 0x8048748.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 260 ticks
-Thread: 0 idle ticks, 257 kernel ticks, 3 user ticks
+Timer: 254 ticks
+Thread: 0 idle ticks, 253 kernel ticks, 1 user ticks
 hda2 (filesys): 65 reads, 188 writes
 hda3 (scratch): 91 reads, 2 writes
 Console: 1583 characters output

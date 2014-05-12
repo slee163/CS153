@@ -1,6 +1,6 @@
 FAIL
 Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0028589 0xc002b7b8 0xc002b86a 0xc0021a94 0xc0021bcb 0xc002ba85 0xc002bced 0xc0021a94 0xc0021bcb 0x804a17f 0x80480ba 0x8048100 0x8048748
+Call stack: 0xc0028589 0xc002b7b8 0xc002b86a 0xc0021a94 0xc0021bcb 0xc002bb74 0xc002bd04 0xc0021a94 0xc0021bcb 0x804a17f 0x80480ba 0x8048100 0x8048748
 Translation of call stack:
 In kernel.o:
 0xc0028589: debug_panic (.../../lib/kernel/debug.c:38)
@@ -8,8 +8,8 @@ In kernel.o:
 0xc002b86a: page_fault (.../userprog/exception.c:160)
 0xc0021a94: intr_handler (..../threads/interrupt.c:367)
 0xc0021bcb: intr_entry (threads/intr-stubs.S:38)
-0xc002ba85: create (.../../userprog/syscall.c:69)
-0xc002bced: syscall_handler (...../userprog/syscall.c:254)
+0xc002bb74: create (.../../userprog/syscall.c:69)
+0xc002bd04: syscall_handler (...../userprog/syscall.c:253)
 0xc0021a94: intr_handler (..../threads/interrupt.c:367)
 0xc0021bcb: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-bad-ptr:

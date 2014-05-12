@@ -66,15 +66,14 @@ wait (pid_t pid)
 bool
 create (const char* file, unsigned initial_size)
 {
-/*
   if(file == NULL || *file == '\0')
   {exit(-1);}
-  if(strlen(file) <= 0 || (strlen(file) +1) > 16)
+  if(strlen(file) <= 0)
   {exit(-1);}
+  if(strlen(file) + 1 > 16)
+  {return 0;}
   bool result = filesys_create(file, initial_size);
   return result;
-  */
-return false;
 }
 
 bool

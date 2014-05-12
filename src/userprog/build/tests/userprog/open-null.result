@@ -1,13 +1,13 @@
 FAIL
 Kernel panic in run: PANIC at ../../filesys/directory.c:125 in dir_lookup(): assertion `name != NULL' failed.
-Call stack: 0xc0028589 0xc002cc21 0xc002c1d7 0xc002ba39 0xc002bd1f 0xc0021a94 0xc0021bcb 0x804a187 0x80480b2 0x80480e4 0x8048728
+Call stack: 0xc0028589 0xc002cc51 0xc002c207 0xc002ba31 0xc002bd3c 0xc0021a94 0xc0021bcb 0x804a187 0x80480b2 0x80480e4 0x8048728
 Translation of call stack:
 In kernel.o:
 0xc0028589: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002cc21: dir_lookup (..../filesys/directory.c:127)
-0xc002c1d7: filesys_open (..../../filesys/filesys.c:74)
-0xc002ba39: open (.../../userprog/syscall.c:85)
-0xc002bd1f: syscall_handler (...../userprog/syscall.c:266)
+0xc002cc51: dir_lookup (..../filesys/directory.c:127)
+0xc002c207: filesys_open (..../../filesys/filesys.c:74)
+0xc002ba31: open (.../../userprog/syscall.c:88)
+0xc002bd3c: syscall_handler (...../userprog/syscall.c:266)
 0xc0021a94: intr_handler (..../threads/interrupt.c:367)
 0xc0021bcb: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/open-null:

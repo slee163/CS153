@@ -1,6 +1,6 @@
 FAIL
 Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0028589 0xc002b7b8 0xc002b86a 0xc0021a94 0xc0021bcb 0xc00277d7 0xc002ca3f 0xc002cc30 0xc002c1d7 0xc002ba39 0xc002bd1f 0xc0021a94 0xc0021bcb 0x804a1a7 0x80480b2 0x8048100 0x8048748
+Call stack: 0xc0028589 0xc002b7b8 0xc002b86a 0xc0021a94 0xc0021bcb 0xc00277d7 0xc002ca6f 0xc002cc60 0xc002c207 0xc002ba31 0xc002bd3c 0xc0021a94 0xc0021bcb 0x804a1a7 0x80480b2 0x8048100 0x8048748
 Translation of call stack:
 In kernel.o:
 0xc0028589: debug_panic (.../../lib/kernel/debug.c:38)
@@ -9,11 +9,11 @@ In kernel.o:
 0xc0021a94: intr_handler (..../threads/interrupt.c:367)
 0xc0021bcb: intr_entry (threads/intr-stubs.S:38)
 0xc00277d7: strcmp (...ild/../../lib/string.c:81)
-0xc002ca3f: lookup (..../filesys/directory.c:103)
-0xc002cc30: dir_lookup (..../filesys/directory.c:127)
-0xc002c1d7: filesys_open (..../../filesys/filesys.c:74)
-0xc002ba39: open (.../../userprog/syscall.c:85)
-0xc002bd1f: syscall_handler (...../userprog/syscall.c:266)
+0xc002ca6f: lookup (..../filesys/directory.c:103)
+0xc002cc60: dir_lookup (..../filesys/directory.c:127)
+0xc002c207: filesys_open (..../../filesys/filesys.c:74)
+0xc002ba31: open (.../../userprog/syscall.c:88)
+0xc002bd3c: syscall_handler (...../userprog/syscall.c:266)
 0xc0021a94: intr_handler (..../threads/interrupt.c:367)
 0xc0021bcb: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/open-bad-ptr:
