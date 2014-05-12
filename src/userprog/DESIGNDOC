@@ -29,8 +29,8 @@ Chris Dube  <cdube001@ucr.edu>
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
-None
-
+bool load (const char *file_name, void (**eip) (void), void **esp, char** args) 
+--Added implementation to support argument passing via pushing the arguments onto the stack
 ---- ALGORITHMS ----
 
 >> A2: Briefly describe how you implemented argument parsing.  How do
@@ -72,7 +72,41 @@ A: One advantage of the Unix approach is the fact that the shell would handle
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
+static void syscall_verify(int* esp)
+--verifies user virtual addresses for memory management
 
+void halt(void);
+--implementation of halt system call
+void exit(int status);
+--implementation of exit system call
+pid_t exec(char* cmd_line);
+--implementation of exec system call
+int wait(pid_t pid);
+--implementation of wait system call
+bool create(const char* file, unsigned initial_size);
+--implementaiton of create system call
+bool remove(const char* file);
+--implementation of remove system call
+int open(const char* file);
+--implementation of open system call
+int filesize(int fd);
+--implementation of filesize system call
+int read(int fd, void* buffer, unsigned size);
+--implementation of read system call
+int write(int fd, const void* buffer, unsigned size);
+--implementation of write system call
+void seek(int fd, unsigned position);
+--implementation of seek system call;
+unsigned tell(int fd);
+--implementation of seek system call;
+void close(int fd);
+--implementation of close system call
+
+struct thread* get_thread_from_tid(tid_t tid)
+--gets a thread* from a given tid
+
+struct fd_file* get_file_from_fd(int fd)
+--gets a file* using a file descriptor and the threads fd_table
 
 >> B2: Describe how file descriptors are associated with open files.
 >> Are file descriptors unique within the entire OS or just within a
@@ -135,6 +169,12 @@ A: In the case of our implementation of the wait system call, it calls
 >> allocated resources (locks, buffers, etc.) are freed?  In a few
 >> paragraphs, describe the strategy or strategies you adopted for
 >> managing these issues.  Give an example.
+
+A: the syscall_verfy function verifies the validity, in most cases, of user 
+   pointer entries. This function is applied to every pointer (pointing to arguments)
+   on the stack to ensure only valid user points are used. This function calls exit(-1)
+   when a pointer fails a check which inturn calls thread_exit() which should free all
+   of threads used resources.
 
 ---- SYNCHRONIZATION ----
 
